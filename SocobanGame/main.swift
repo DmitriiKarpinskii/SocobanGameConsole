@@ -55,7 +55,7 @@ enum Direction {
 
 struct Game {
     
-    
+    var gameOver = false
     let actionField : Room
     var boxes: [Box] = []
     var fullFiled : Room {
@@ -126,7 +126,8 @@ struct Game {
             
         var generaedBoxes = 0
         
-        while generaedBoxes < 5 {
+        let countBox = (room.height + room.weight) / 3
+        while generaedBoxes < countBox {
             
             xBox = Int.random(in: 2...actionField.weight - 1)
             yBox = Int.random(in: 2...actionField.height - 1)
@@ -155,7 +156,7 @@ struct Game {
         print("Координаты ▅ (ящика):          x:\(box.x) y:\(box.y)")
         print("Координаты ★ (игрока):         x:\(player.x) y:\(player.y)")
         print("Координаты ⚑ (конечной точки): x:\(endPoint.x) y:\(endPoint.y)")
-        print("\nЗадание: дотолкать ящик до конечной точки")
+        print("\nЗадание: дотолкать ящики до конечной точки")
     }
     
     mutating func movePlayer(direct: Direction) {
@@ -265,6 +266,11 @@ struct Game {
         } else  {
             print("Движение в этом навправлении невозможно.")
         }
+        
+        if boxes.isEmpty {
+            gameOver = true
+            print("Все ящики доставлены")
+        }
     }
     
     
@@ -311,7 +317,7 @@ struct Game {
 }
 
 
-var room = Room(weight: 5, height: 5)
+var room = Room(weight: 20, height: 20)
 var game = Game(room: room)
 
 
@@ -338,4 +344,5 @@ repeat {
     }
     
     
-} while line != "ex"
+} while line != "ex" && !game.gameOver
+game.printField()
