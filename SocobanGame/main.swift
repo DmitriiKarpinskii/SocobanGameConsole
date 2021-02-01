@@ -56,6 +56,7 @@ struct Game {
     
     
     let actionField : Room
+    var boxes: [Box] = []
     var fullFiled : Room {
         return Room(weight: actionField.weight + 2, height: actionField.height + 2)
     }
