@@ -123,6 +123,32 @@ struct Game {
         
         self.endPoint = Point(x: xPoint, y: yPoint)
             
+        var generaedBoxes = 0
+        
+        while generaedBoxes < 5 {
+            
+            xBox = Int.random(in: 2...actionField.weight - 1)
+            yBox = Int.random(in: 2...actionField.height - 1)
+            
+            var boxPositionIsUnique = (player.x != xBox || player.y != yBox) && (xPoint != xBox || yPoint != yBox)
+            
+            
+            for box in boxes {
+                if (box.x == xBox && box.y == yBox) {
+                    boxPositionIsUnique = false
+                    break;
+                }
+            }
+            
+            if boxPositionIsUnique {
+                boxes.append(Box(x: xBox, y: yBox))
+                generaedBoxes += 1
+            }
+        }
+        
+        print(boxes)
+        
+        
         
        
         print("Координаты ▅ (ящика):          x:\(box.x) y:\(box.y)")
@@ -216,9 +242,7 @@ struct Game {
     func printField() {
         
         for row in 1...fullFiled.height {
-           
             var lineForPrint = Array(repeating: "  ", count: fullFiled.weight)
-                                                    
             if row == 1 {
                 lineForPrint = Array(repeating: "\u{2500}\u{2500}", count: fullFiled.weight)
                 lineForPrint[0] = "\u{250D}"
@@ -232,17 +256,24 @@ struct Game {
                 lineForPrint[fullFiled.weight - 1] = "\u{2502}"
             }
             
+            for box in boxes {
+                if row == box.y + 1 {
+                    lineForPrint[box.x] = " \u{2585}"
+                }
+            }
+            
             if row == player.y + 1 {
                 lineForPrint[player.x] = " \u{2605}"
             }
             
-            if row == box.y + 1 {
-                lineForPrint[box.x] = " \u{2585}"
-            }
-    
+//            if row == box.y + 1 {
+//                lineForPrint[box.x] = " \u{2585}"
+//            }
+//
             if row == endPoint.y + 1  {
                 lineForPrint[endPoint.x] = " ⚑"
             }
+            
             
             print(lineForPrint.joined())
             
@@ -251,7 +282,7 @@ struct Game {
 }
 
 
-var room = Room(weight: 13, height: 7)
+var room = Room(weight: 5, height: 5)
 var game = Game(room: room)
 
 
