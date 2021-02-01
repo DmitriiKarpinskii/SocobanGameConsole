@@ -27,7 +27,7 @@ struct Box {
     var x: Int
     var y: Int
     
-    mutating func move(direct: Direction) {
+    mutating func move(direct: Direction) -> Box {
         
         switch direct {
         case .Up :
@@ -39,6 +39,7 @@ struct Box {
         case .Left :
             self.x = x - 1
         }
+        return self
     }
     
 }
@@ -161,26 +162,28 @@ struct Game {
         self.player.walk(direct: direct)
     }
     
-    mutating func moveBox(direct: Direction) {
-        self.box.move(direct: direct)
+    mutating func moveBox(direct: Direction, indexBox: Int) {
+        boxes[indexBox] = boxes[indexBox].move(direct: direct)
     }
     
-    func avalibaleNewPositionForBox(direct: Direction) -> Bool {
+    func avalibaleNewPositionForBox(direct: Direction, indexBox: Int) -> Bool {
         
         switch direct {
+        
         case .Up:
-            return 1...actionField.height ~= box.y - 1
+          
+            return 1...actionField.height ~= boxes[indexBox].y - 1 &&  boxes.filter() {$0.y == boxes[indexBox].y - 1 && $0.x == boxes[indexBox].x}.count == 0
         case .Down :
-            return 1...actionField.height ~= box.y + 1
+            return 1...actionField.height ~= boxes[indexBox].y + 1 &&   boxes.filter() {$0.y == boxes[indexBox].y + 1 && $0.x == boxes[indexBox].x}.count == 0
         case .Right :
-            return 1...actionField.weight ~= box.x + 1
+            return 1...actionField.weight ~= boxes[indexBox].x + 1 &&   boxes.filter() {$0.y == boxes[indexBox].y && $0.x == boxes[indexBox].x + 1}.count == 0
         case .Left :
-            return 1...actionField.weight ~= box.x - 1
+            return 1...actionField.weight ~= boxes[indexBox].x - 1 &&   boxes.filter() {$0.y == boxes[indexBox].y && $0.x == boxes[indexBox].x - 1}.count == 0
         }
     }
     
     func avalibaleNewPositionForPlayer(direct: Direction) -> Bool {
-        
+       
         switch direct {
         case .Up:
             return player.y - 1 != endPoint.y || player.x != endPoint.x
@@ -193,45 +196,71 @@ struct Game {
         }
     }
     
-    func isBoxOnWay(direct: Direction) -> Bool {
-        switch direct {
-        case .Up:
-            return player.x == box.x  &&  player.y - 1 == box.y
-        case .Down :
-            return player.x == box.x  &&  player.y + 1 == box.y
-        case .Right :
-            return player.x + 1 == box.x  &&  player.y == box.y
-        case .Left :
-            return player.x - 1 == box.x  &&  player.y == box.y
+    func isBoxOnWay(direct: Direction) -> Int {
+        
+        var index = 0
+        var boxIsOnAWay = false
+        
+        for box in boxes {
+
+            switch direct {
+            case .Up:
+//                print("Index's box: [\(index)] Up")
+                boxIsOnAWay = player.x == box.x  &&  player.y - 1 == box.y
+            case .Down :
+//                print("Index's box: [\(index)] Down")
+                boxIsOnAWay = player.x == box.x  &&  player.y + 1 == box.y
+            case .Right :
+//                print("Index's box: [\(index)] Right")
+                boxIsOnAWay = player.x + 1 == box.x  &&  player.y == box.y
+            case .Left :
+//                print("Index's box: [\(index)] Left")
+                boxIsOnAWay = player.x - 1 == box.x  &&  player.y == box.y
+            }
+            
+            if boxIsOnAWay {
+                return index
+            } else {
+                index += 1
+            }
         }
+        return -1
     }
     
-    func isBoxOnEndPoint() -> Bool {
-        return box.x == endPoint.x && box.y == endPoint.y
+    func indexBoxOnEndPoint() -> Int? {
+        
+        var indexBox = 0
+        for box in boxes {
+            if box.x == endPoint.x && box.y == endPoint.y {
+                return indexBox
+            }
+            indexBox += 1
+        }
+        return nil
     }
     
-    func generateNewPositionForBox() -> Box {
-        
-        var xBox : Int
-        var yBox : Int
-        repeat {
-                xBox = Int.random(in: 2...actionField.weight - 1)
-                yBox = Int.random(in: 2...actionField.height - 1)
-        } while xBox == player.x || yBox == endPoint.y
-        
-        return Box(x: xBox, y: yBox)
+    mutating func removeBoxFromArray(indexBox: Int) {
+        boxes.remove(at: indexBox)
     }
     
     mutating func stepPlayer(direct: Direction) {
-
-        if isBoxOnWay(direct: direct) && avalibaleNewPositionForBox(direct: direct) {
-            moveBox(direct: direct)
+      
+        let indexBoxThatOnWay = isBoxOnWay(direct: direct)
+        let isOkBoxOnAWay =  indexBoxThatOnWay != -1 ? true : false
+        print("Номер ящика, который мешает \(indexBoxThatOnWay)")
+        
+        let isOkPlayerPosition = avalibaleNewPositionForPlayer(direct: direct)
+        let isOkBoxPosition = isOkBoxOnAWay ? avalibaleNewPositionForBox(direct: direct, indexBox: indexBoxThatOnWay) : false
+        
+        
+        if isOkBoxOnAWay && isOkBoxPosition {
+            moveBox(direct: direct, indexBox: indexBoxThatOnWay)
             movePlayer(direct: direct)
-            if isBoxOnEndPoint() {
+            if let index = indexBoxOnEndPoint() {
                 print("Ящик доставлен!")
-                box = generateNewPositionForBox()
+                removeBoxFromArray(indexBox: index)
             }
-        } else if !isBoxOnWay(direct: direct) && avalibaleNewPositionForPlayer(direct: direct) {
+        } else if !isOkBoxOnAWay && isOkPlayerPosition {
             movePlayer(direct: direct)
         } else  {
             print("Движение в этом навправлении невозможно.")
