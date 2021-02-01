@@ -1,12 +1,3 @@
-//
-//  main.swift
-//  Sokoban
-//
-//  Created by Dmitry Karpinsky on 31.01.2021.
-//
-
-import Foundation
-
 struct Room {
     var weight : Int
     var height : Int
