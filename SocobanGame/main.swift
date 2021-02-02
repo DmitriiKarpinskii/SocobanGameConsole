@@ -63,7 +63,7 @@ struct Game {
     var player : Player {
         didSet {
             if 1...actionField.height ~= player.y && 1...actionField.weight ~= player.x {
-                print("Установлены новые координаты игрока: x: \(player.x) y: \(player.y)")
+//                print("Установлены новые координаты игрока: x: \(player.x) y: \(player.y)")
             } else {
                 print("Не удается переместить игрока.")
                 player = oldValue
@@ -73,11 +73,11 @@ struct Game {
     var box : Box {
         didSet {
             if 1...actionField.height ~= box.y && 1...actionField.weight ~= box.x {
-                print("Установлены новые координаты ящика: x: \(box.x) y: \(box.y)")
+//                print("Установлены новые координаты ящика: x: \(box.x) y: \(box.y)")
             } else if box.x == -1 && box.y == -1 {
-                print("Служебная установка")
+//                print("Служебная установка")
             } else {
-                print("Не удается переместить ящик.")
+//                print("Не удается переместить ящик.")
                 box = oldValue
             }
         }
@@ -124,10 +124,11 @@ struct Game {
             
         
        
-        print("Координаты ▅ (ящика):          x:\(box.x) y:\(box.y)")
-        print("Координаты ★ (игрока):         x:\(player.x) y:\(player.y)")
-        print("Координаты ⚑ (конечной точки): x:\(endPoint.x) y:\(endPoint.y)")
-        print("\nЗадание: дотолкать ящик до конечной точки")
+//        print("Координаты ▅ (ящика):          x:\(box.x) y:\(box.y)")
+//        print("Координаты ★ (игрока):         x:\(player.x) y:\(player.y)")
+//        print("Координаты ⚑ (конечной точки): x:\(endPoint.x) y:\(endPoint.y)")
+        print("\nЗадание: дотолкать игроком(★) ящик(▅) до конечной точки(⚑)")
+        print("\nУправление: [WASD] + ENTER, Выход: \"exit\"")
     }
     
     mutating func movePlayer(direct: Direction) {
@@ -277,4 +278,5 @@ repeat {
     }
     
     
-} while line != "ex"
+} while line != "exit"
+//
