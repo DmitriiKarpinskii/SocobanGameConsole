@@ -3,7 +3,6 @@ struct Room {
     var height : Int
 }
 
-
 struct Player {
  
     var x: Int
