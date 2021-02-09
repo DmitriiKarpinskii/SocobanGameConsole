@@ -147,11 +147,6 @@ struct Game {
             }
         }
         
-        print(boxes)
-        
-        
-        
-       
         print("Координаты ▅ (ящика):          x:\(box.x) y:\(box.y)")
         print("Координаты ★ (игрока):         x:\(player.x) y:\(player.y)")
         print("Координаты ⚑ (конечной точки): x:\(endPoint.x) y:\(endPoint.y)")
@@ -343,5 +338,5 @@ repeat {
     }
     
     
-} while line != "ex" && !game.gameOver
+} while line != "exit" && !game.gameOver
 game.printField()
